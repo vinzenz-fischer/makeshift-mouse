@@ -6,28 +6,42 @@ active = False
 speed = 20
 listener: Listener
 
-def keycode(key, char: str):
-    return key == KeyCode.from_char(char.lower()) or key == KeyCode.from_char(char.upper())
+def keycode(char: str):
+    return [KeyCode.from_char(char.lower()), KeyCode.from_char(char.upper())]
+
+keybinds: dict[str, Key] = {
+    "toggle active":Key.caps_lock,
+    "move up":      keycode("w"),
+    "move left":    keycode("a"),
+    "move down":    keycode("s"),
+    "move right":   keycode("d"),
+    "click left":   keycode("w"),
+    "click left":   keycode("q"),
+    "click right":  keycode("e"),
+    "click middle": keycode("r"),
+    "scroll up":    keycode("f"),
+    "scroll down":  keycode("c")
+}
 
 def on_press(key):
     global active, listener
     
-    if key == Key.caps_lock:
+    if key in keybinds["toggle active"]:
         active = not active
         listener._suppress = active
         print(f"{active=}")
     
     if not active: return
     
-    if   keycode(key, "w"): pag.move(0, -speed)
-    elif keycode(key, "a"): pag.move(-speed, 0)
-    elif keycode(key, "s"): pag.move(0,  speed)
-    elif keycode(key, "d"): pag.move( speed, 0)
-    elif keycode(key, "q"): pag.click(button=pag.LEFT)
-    elif keycode(key, "e"): pag.click(button=pag.RIGHT)
-    elif keycode(key, "r"): pag.click(button=pag.MIDDLE)
-    elif keycode(key, "f"): pag.scroll(10)
-    elif keycode(key, "c"): pag.scroll(-10)
+    if   key in keybinds["move up"]:      pag.move(0, -speed)
+    elif key in keybinds["move left"]:    pag.move(-speed, 0)
+    elif key in keybinds["move down"]:    pag.move(0,  speed)
+    elif key in keybinds["move right"]:   pag.move( speed, 0)
+    elif key in keybinds["click left"]:   pag.click(button=pag.LEFT)
+    elif key in keybinds["click right"]:  pag.click(button=pag.RIGHT)
+    elif key in keybinds["click middle"]: pag.click(button=pag.MIDDLE)
+    elif key in keybinds["scroll up"]:    pag.scroll(10)
+    elif key in keybinds["scroll down"]:  pag.scroll(-10)
 
 def main():
     global listener
