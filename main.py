@@ -29,12 +29,9 @@ def on_press(key):
     elif keycode(key, "f"): pag.scroll(10)
     elif keycode(key, "c"): pag.scroll(-10)
 
-def win32_event_filter(msg, data):
-    print(msg, data)
-
 def main():
     global listener
-    listener = Listener(on_press=on_press, win32_event_filter=win32_event_filter)
+    listener = Listener(on_press=on_press)
     with listener:
         listener.join()
 
