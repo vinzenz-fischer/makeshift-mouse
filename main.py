@@ -2,17 +2,19 @@ from pynput.keyboard import Key, Listener
 from pynput.keyboard._win32 import KeyCode
 import pyautogui as pag
 pag.PAUSE = 0.01
-speed = 20
 active = False
+speed = 20
+listener: Listener
 
 def keycode(key, char: str):
     return key == KeyCode.from_char(char.lower()) or key == KeyCode.from_char(char.upper())
 
 def on_press(key):
-    global active
+    global active, listener
     
     if key == Key.caps_lock:
         active = not active
+        listener._suppress = active
         print(f"{active=}")
     
     if not active: return
@@ -27,8 +29,13 @@ def on_press(key):
     elif keycode(key, "f"): pag.scroll(10)
     elif keycode(key, "c"): pag.scroll(-10)
 
+def win32_event_filter(msg, data):
+    print(msg, data)
+
 def main():
-    with Listener(on_press=on_press) as listener:
+    global listener
+    listener = Listener(on_press=on_press, win32_event_filter=win32_event_filter)
+    with listener:
         listener.join()
 
 if __name__ == "__main__":
